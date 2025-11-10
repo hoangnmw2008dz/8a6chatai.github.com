@@ -1,0 +1,40 @@
+<script>
+  // ✅ Dùng backend thật trên Render
+  const API_URL = "https://thcskienhung8a6.onrender.com/chat";
+
+  const chat = document.getElementById('chat');
+  function append(cls, text) {
+    const d = document.createElement('div');
+    d.className = 'msg ' + cls;
+    d.textContent = text;
+    chat.appendChild(d);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  async function send() {
+    const input = document.getElementById('input');
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    append('user', 'Bạn: ' + msg);
+    input.value = '';
+
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: msg })
+      });
+
+      if (!res.ok) {
+        throw new Error(`Server trả về mã lỗi ${res.status}`);
+      }
+
+      const js = await res.json();
+      append('bot', 'THCSKIENHUNG8A6: ' + (js.reply || 'Không có phản hồi'));
+    } catch (e) {
+      append('bot', '⚠️ Lỗi kết nối tới AI: ' + e.message);
+    }
+  }
+</script>
+<!-- update -->
